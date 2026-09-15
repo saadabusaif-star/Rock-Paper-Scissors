@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Rock Paper Scissors | The First Academy</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #eef3ff;
+      color: #17233c;
+      margin: 0;
+      padding: 20px;
+    }
+    .game {
+      max-width: 650px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 18px;
+      box-shadow: 0 4px 18px #0002;
+    }
+    h1 { margin-top: 0; }
+    #webcam-container canvas {
+      width: min(80vw, 320px);
+      height: auto;
+      border-radius: 14px;
+      border: 3px solid #315dcc;
+    }
+    .score {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin: 18px 0;
+      font-size: 1.25rem;
+    }
+    .score div {
+      background: #e8eeff;
+      padding: 12px 20px;
+      border-radius: 12px;
+    }
+    button {
+      border: 0;
+      border-radius: 10px;
+      padding: 13px 22px;
+      margin: 8px;
+      font-size: 1rem;
+      color: white;
+      background: #315dcc;
+      cursor: pointer;
+    }
+    button:last-child { background: #68758c; }
+    #result {
+      min-height: 32px;
+      font-size: 1.25rem;
+      font-weight: bold;
+    }
+    #label-container div { margin: 3px; color: #52627a; }
+  
+    :root { --deep:#081b45; --navy:#0d2c6b; --gold:#ffc845; }
+    body { background:#f7f9fd; color:#10203f; }
+    .school-header { color:white; background:linear-gradient(180deg,var(--deep),var(--navy)); }
+    .school-top { max-width:900px; margin:auto; padding:9px 20px; display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; color:#ffeab2; font-size:12px; }
+    .school-letter { max-width:900px; margin:auto; padding:15px 20px; display:flex; align-items:center; justify-content:space-between; gap:18px; border-top:1px solid #ffffff25; border-bottom:3px solid var(--gold); }
+    .school-side { display:flex; align-items:center; gap:12px; }
+    .uae-flag { width:42px; height:27px; background:linear-gradient(#00732f 0 33%,#fff 33% 66%,#000 66%); border-left:10px solid #f00000; border-radius:3px; box-shadow:0 1px 3px #0005; }
+    .school-copy, .school-arabic { display:flex; flex-direction:column; line-height:1.45; font-size:10px; }
+    .school-copy b, .school-arabic b { color:var(--gold); font-size:12px; }
+    .school-arabic { text-align:right; direction:rtl; font-size:12px; }
+    .school-logo { display:grid; place-items:center; width:48px; height:48px; border:2px solid var(--gold); border-radius:50%; background:white; color:var(--navy); font-size:25px; }
+    .school-nav { max-width:900px; margin:auto; padding:10px 20px; color:#ffeab2; font-weight:bold; font-size:12px; }
+    .game-shell { width:min(900px,calc(100% - 28px)); margin:26px auto 42px; }
+    .game-title { color:var(--navy); font-size:clamp(30px,6vw,48px); margin:4px 0 8px; }
+    .game-subtitle { color:#60708f; margin-top:0; }
+    .school-footer { color:#ffffffaa; background:var(--deep); padding:28px 20px 16px; }
+    .school-footer-inner { max-width:900px; margin:auto; display:flex; justify-content:space-between; gap:20px; flex-wrap:wrap; }
+    .school-footer h3 { color:white; margin:0 0 6px; }
+    .school-footer p { margin:4px 0; font-size:12px; }
+    .school-motto { width:100%; text-align:center; border-top:1px solid #ffffff22; margin-top:18px; padding-top:13px; color:#ffeab2; letter-spacing:.18em; font-size:10px; }
+    @media(max-width:560px){ .school-letter { align-items:flex-start; flex-direction:column; } .school-side.school-lockup { align-self:flex-end; } }
+
+  </style>
+</head>
+<body>
+  <header class="school-header">
+    <div class="school-top">
+      <span>🇦🇪 Building Brave Tomorrow</span>
+      <span>AI Exhibition · Interactive Learning</span>
+    </div>
+    <div class="school-letter">
+      <div class="school-side">
+        <div class="uae-flag" aria-label="United Arab Emirates flag"></div>
+        <div class="school-copy">
+          <b>UNITED ARAB EMIRATES</b>
+          <span>MINISTRY OF EDUCATION</span>
+          <span>THE FIRST ACADEMY – PRIVATE, AJMAN</span>
+        </div>
+      </div>
+      <div class="school-side school-lockup">
+        <div class="school-arabic">
+          <b>مدرسة الأكاديمية الأولى</b>
+          <span>بوابة التعلم والابتكار</span>
+        </div>
+        <div class="school-logo" aria-label="The First Academy logo">🎓</div>
+      </div>
+    </div>
+    <div class="school-nav">✨ AI Exhibition · Smart Games · Learning Through Technology</div>
+  </header>
+  <main class="game-shell">
+    <h1 class="game-title">AI Rock Paper Scissors</h1>
+    <p class="game-subtitle">A fun machine-learning game presented by The First Academy, Ajman</p>
+  <div class="game">
+    <h1>AI Rock Paper Scissors</h1>
+    <p>Press Start, allow the camera, then show your hand.</p>
+
+    <div class="score">
+      <div>You: <strong id="player-score">0</strong></div>
+      <div>Computer: <strong id="computer-score">0</strong></div>
+    </div>
+
+    <button id="start-button" onclick="init()">Start Game</button>
+    <button onclick="resetGame()">Reset Score</button>
+
+    <div id="webcam-container"></div>
+    <p id="detected">Detected move: Waiting...</p>
+    <div id="label-container"></div>
+    <p id="result">Your first move will appear here.</p>
+    <p><small>One round is counted every two seconds.</small></p>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+
+  <script>
+    // Your Teachable Machine model URL
+    const URL = "https://teachablemachine.withgoogle.com/models/ap3SgFs8l/";
+
+    let model, webcam, labelContainer, maxPredictions;
+    let playerScore = 0;
+    let computerScore = 0;
+    let canPlay = true;
+    let gameStarted = false;
+
+    async function init() {
+      if (gameStarted) return;
+      gameStarted = true;
+      document.getElementById("start-button").disabled = true;
+      document.getElementById("start-button").textContent = "Game Running";
+
+      const modelURL = URL + "model.json";
+      const metadataURL = URL + "metadata.json";
+
+      model = await tmImage.load(modelURL, metadataURL);
+      maxPredictions = model.getTotalClasses();
+
+      const flip = true;
+      webcam = new tmImage.Webcam(320, 320, flip);
+      await webcam.setup();
+      await webcam.play();
+      window.requestAnimationFrame(loop);
+
+      document.getElementById("webcam-container").appendChild(webcam.canvas);
+      labelContainer = document.getElementById("label-container");
+      for (let i = 0; i < maxPredictions; i++) {
+        labelContainer.appendChild(document.createElement("div"));
+      }
+    }
+
+    async function loop() {
+      webcam.update();
+      await predict();
+      window.requestAnimationFrame(loop);
+    }
+
+    async function predict() {
+      const prediction = await model.predict(webcam.canvas);
+
+      let best = prediction[0];
+      for (let i = 1; i < prediction.length; i++) {
+        if (prediction[i].probability > best.probability) {
+          best = prediction[i];
+        }
+      }
+
+      for (let i = 0; i < maxPredictions; i++) {
+        labelContainer.childNodes[i].innerHTML =
+          prediction[i].className + ": " + prediction[i].probability.toFixed(2);
+      }
+
+      const move = best.className.trim().toLowerCase();
+      const confidence = best.probability;
+      document.getElementById("detected").textContent =
+        "Detected: " + best.className + " (" + Math.round(confidence * 100) + "%)";
+
+      if (
+        canPlay && confidence >= 0.80 &&
+        (move === "rock" || move === "paper" || move === "scissors")
+      ) {
+        canPlay = false;
+        playRound(move);
+        setTimeout(function () {
+          canPlay = true;
+        }, 2000);
+      }
+    }
+
+    function playRound(playerMove) {
+      const moves = ["rock", "paper", "scissors"];
+      const computerMove = moves[Math.floor(Math.random() * moves.length)];
+      let result;
+
+      if (playerMove === computerMove) {
+        result = "Draw! Both chose " + titleCase(playerMove) + ".";
+      } else if (
+        (playerMove === "rock" && computerMove === "scissors") ||
+        (playerMove === "paper" && computerMove === "rock") ||
+        (playerMove === "scissors" && computerMove === "paper")
+      ) {
+        playerScore++;
+        result = "You win! You showed " + titleCase(playerMove) +
+          "; computer showed " + titleCase(computerMove) + ".";
+      } else {
+        computerScore++;
+        result = "Computer wins! You showed " + titleCase(playerMove) +
+          "; computer showed " + titleCase(computerMove) + ".";
+      }
+
+      document.getElementById("player-score").textContent = playerScore;
+      document.getElementById("computer-score").textContent = computerScore;
+      document.getElementById("result").textContent = result;
+    }
+
+    function titleCase(word) {
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    }
+
+    function resetGame() {
+      playerScore = 0;
+      computerScore = 0;
+      document.getElementById("player-score").textContent = "0";
+      document.getElementById("computer-score").textContent = "0";
+      document.getElementById("result").textContent = "Score reset. Show your move.";
+    }
+  </script>
+  </main>
+  <footer class="school-footer">
+    <div class="school-footer-inner">
+      <div>
+        <h3>🎓 The First Academy</h3>
+        <p>Private School · Ajman, United Arab Emirates</p>
+        <p>AI Exhibition 2026 · Learning, creating, and innovating</p>
+      </div>
+      <div style="text-align:right">
+        <p>🇦🇪 United Arab Emirates</p>
+        <p>Ministry of Education</p>
+      </div>
+      <div class="school-motto">RESPECT · BELONG · ACHIEVE</div>
+    </div>
+  </footer>
+</body>
+</html>
