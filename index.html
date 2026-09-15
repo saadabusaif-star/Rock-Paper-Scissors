@@ -1,262 +1,43 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AI Rock Paper Scissors | The First Academy</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      background: #eef3ff;
-      color: #17233c;
-      margin: 0;
-      padding: 20px;
-    }
-    .game {
-      max-width: 650px;
-      margin: auto;
-      background: white;
-      padding: 20px;
-      border-radius: 18px;
-      box-shadow: 0 4px 18px #0002;
-    }
-    h1 { margin-top: 0; }
-    #webcam-container canvas {
-      width: min(80vw, 320px);
-      height: auto;
-      border-radius: 14px;
-      border: 3px solid #315dcc;
-    }
-    .score {
-      display: flex;
-      justify-content: center;
-      gap: 15px;
-      margin: 18px 0;
-      font-size: 1.25rem;
-    }
-    .score div {
-      background: #e8eeff;
-      padding: 12px 20px;
-      border-radius: 12px;
-    }
-    button {
-      border: 0;
-      border-radius: 10px;
-      padding: 13px 22px;
-      margin: 8px;
-      font-size: 1rem;
-      color: white;
-      background: #315dcc;
-      cursor: pointer;
-    }
-    button:last-child { background: #68758c; }
-    #result {
-      min-height: 32px;
-      font-size: 1.25rem;
-      font-weight: bold;
-    }
-    #label-container div { margin: 3px; color: #52627a; }
-  
-    :root { --deep:#081b45; --navy:#0d2c6b; --gold:#ffc845; }
-    body { background:#f7f9fd; color:#10203f; }
-    .school-header { color:white; background:linear-gradient(180deg,var(--deep),var(--navy)); }
-    .school-top { max-width:900px; margin:auto; padding:9px 20px; display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; color:#ffeab2; font-size:12px; }
-    .school-letter { max-width:900px; margin:auto; padding:15px 20px; display:flex; align-items:center; justify-content:space-between; gap:18px; border-top:1px solid #ffffff25; border-bottom:3px solid var(--gold); }
-    .school-side { display:flex; align-items:center; gap:12px; }
-    .uae-flag { width:42px; height:27px; background:linear-gradient(#00732f 0 33%,#fff 33% 66%,#000 66%); border-left:10px solid #f00000; border-radius:3px; box-shadow:0 1px 3px #0005; }
-    .school-copy, .school-arabic { display:flex; flex-direction:column; line-height:1.45; font-size:10px; }
-    .school-copy b, .school-arabic b { color:var(--gold); font-size:12px; }
-    .school-arabic { text-align:right; direction:rtl; font-size:12px; }
-    .school-logo { display:grid; place-items:center; width:48px; height:48px; border:2px solid var(--gold); border-radius:50%; background:white; color:var(--navy); font-size:25px; }
-    .school-nav { max-width:900px; margin:auto; padding:10px 20px; color:#ffeab2; font-weight:bold; font-size:12px; }
-    .game-shell { width:min(900px,calc(100% - 28px)); margin:26px auto 42px; }
-    .game-title { color:var(--navy); font-size:clamp(30px,6vw,48px); margin:4px 0 8px; }
-    .game-subtitle { color:#60708f; margin-top:0; }
-    .school-footer { color:#ffffffaa; background:var(--deep); padding:28px 20px 16px; }
-    .school-footer-inner { max-width:900px; margin:auto; display:flex; justify-content:space-between; gap:20px; flex-wrap:wrap; }
-    .school-footer h3 { color:white; margin:0 0 6px; }
-    .school-footer p { margin:4px 0; font-size:12px; }
-    .school-motto { width:100%; text-align:center; border-top:1px solid #ffffff22; margin-top:18px; padding-top:13px; color:#ffeab2; letter-spacing:.18em; font-size:10px; }
-    @media(max-width:560px){ .school-letter { align-items:flex-start; flex-direction:column; } .school-side.school-lockup { align-self:flex-end; } }
-
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>AI Rock Paper Scissors | The First Academy</title>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+<style>
+:root{--navy:#081b45;--blue:#17419a;--sky:#4b82e8;--gold:#ffc845;--red:#ef6363;--green:#32b878;--ink:#17233c;--muted:#63708a;--bg:#eef4ff;--white:#fff}*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Nunito,Arial,sans-serif;color:var(--ink);background:radial-gradient(circle at 20% 0,#fff 0,#eef4ff 45%,#dce8ff 100%)}body{display:flex;flex-direction:column}.school-header{background:linear-gradient(110deg,var(--navy),#123884);color:#fff;box-shadow:0 4px 18px #081b4544}.top{max-width:1180px;margin:auto;padding:6px 18px;display:flex;justify-content:space-between;gap:8px;color:#ffeab2;font-size:11px}.letter{max-width:1180px;margin:auto;padding:9px 18px;display:flex;justify-content:space-between;align-items:center;gap:15px;border-top:1px solid #fff2;border-bottom:2px solid var(--gold)}.school-side{display:flex;align-items:center;gap:10px}.flag{width:35px;height:22px;background:linear-gradient(#00732f 0 33%,#fff 33% 66%,#000 66%);border-left:8px solid #e50000;border-radius:3px}.copy,.arabic{display:flex;flex-direction:column;font-size:9px;line-height:1.35}.copy b,.arabic b{font-size:11px;color:var(--gold)}.arabic{text-align:right;direction:rtl;font-size:11px}.logo{display:grid;place-items:center;width:38px;height:38px;border:2px solid var(--gold);border-radius:50%;background:#fff;color:var(--navy);font-size:19px}.nav{max-width:1180px;margin:auto;padding:6px 18px;color:#ffeab2;font-weight:800;font-size:11px}.main{width:min(1180px,calc(100% - 24px));margin:auto;flex:1;padding:14px 0 18px}.title-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.title-row h1{margin:0;color:var(--navy);font-size:clamp(25px,4vw,40px);line-height:1}.title-row p{margin:5px 0 0;color:var(--muted);font-size:12px}.round-badge{background:var(--gold);color:var(--navy);padding:9px 13px;border-radius:999px;font-size:12px;font-weight:900;white-space:nowrap;box-shadow:0 3px 0 #d9a82e}.scoreboard{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:stretch;margin-bottom:10px}.score-card,.round-card{border-radius:15px;padding:10px 14px;box-shadow:0 5px 16px #1238841c}.score-card{color:#fff;display:flex;justify-content:space-between;align-items:center}.score-card.player{background:linear-gradient(135deg,#2676df,#17419a)}.score-card.ai{background:linear-gradient(135deg,#ee7676,#bd405c)}.score-card small{display:block;font-weight:800;opacity:.85;font-size:10px}.score-card b{font-size:34px;line-height:1}.score-card .avatar{font-size:25px}.round-card{display:grid;place-items:center;min-width:100px;background:#fff;border:2px solid var(--gold);color:var(--navy);text-align:center}.round-card b{font-size:24px}.round-card small{font-size:9px;font-weight:900;color:var(--muted)}.arena{display:grid;grid-template-columns:minmax(280px,390px) 1fr;gap:14px;background:#ffffffdd;border:1px solid #d8e3f6;border-radius:20px;padding:14px;box-shadow:0 12px 30px #1238841b}.camera-panel{position:relative;border-radius:16px;overflow:hidden;background:var(--navy);min-height:310px;display:flex;align-items:center;justify-content:center;border:4px solid #2c66c9}.camera-panel:before{content:'AI CAMERA';position:absolute;z-index:2;top:9px;left:10px;background:#fff;color:var(--blue);border-radius:999px;padding:5px 9px;font-size:10px;font-weight:900}.camera-panel:after{content:'Show one hand sign';position:absolute;z-index:2;bottom:8px;left:50%;transform:translateX(-50%);background:#081b45cc;color:#fff;border-radius:999px;padding:5px 10px;font-size:10px;white-space:nowrap}.camera-panel canvas{width:100%;height:auto;max-height:390px;object-fit:cover;display:block}.camera-placeholder{color:#fff;text-align:center;padding:30px;font-size:14px}.camera-placeholder strong{display:block;font-size:44px;margin-bottom:8px}.right-panel{display:flex;flex-direction:column;gap:10px;min-width:0}.move-board{display:grid;grid-template-columns:1fr 1fr;gap:10px}.move-card{padding:12px;border-radius:14px;background:#f4f7ff;border:1px solid #dbe5f7}.move-card.ai-move{background:#fff3f1}.move-card small{display:block;color:var(--muted);font-size:10px;font-weight:900}.move-card b{display:block;color:var(--navy);font-size:21px;margin-top:4px}.confidence-title{display:flex;justify-content:space-between;font-size:11px;font-weight:900;color:var(--muted)}.confidence-bar{height:12px;border-radius:99px;background:#e3eaf7;overflow:hidden;margin-top:5px}.confidence-fill{height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--green));border-radius:99px;transition:width .25s}.result{display:grid;place-items:center;min-height:72px;text-align:center;padding:10px;background:#fffbea;border:2px solid #ffe08a;border-radius:14px;color:var(--navy);font-size:17px;font-weight:900}.result.win{background:#eafff3;border-color:#8cdbb4;color:#187548}.result.lose{background:#fff0f0;border-color:#f2a4a4;color:#a9344a}.labels{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.label{padding:7px 5px;border-radius:10px;text-align:center;font-size:11px;font-weight:900;color:#fff;background:#71809c}.label.rock{background:#2676df}.label.paper{background:#32a975}.label.scissors{background:#db6572}.label .percent{display:block;font-size:14px;margin-top:2px}.actions{display:flex;gap:8px;flex-wrap:wrap}.primary,.secondary{border:0;border-radius:999px;padding:11px 18px;font-weight:900;font-size:13px;cursor:pointer}.primary{background:var(--gold);color:var(--navy);box-shadow:0 3px 0 #d3a52c}.secondary{background:#e8eefb;color:var(--blue)}button:disabled{opacity:.6;cursor:not-allowed}.instructions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}.tip{background:#fff;border-radius:12px;padding:8px;text-align:center;font-size:10px;color:var(--muted);border:1px solid #e0e8f6}.tip b{display:block;color:var(--navy);font-size:12px}.footer{background:var(--navy);color:#b9c6df;padding:12px 18px;font-size:10px}.footer-inner{max-width:1180px;margin:auto;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}.motto{color:var(--gold);font-weight:900;letter-spacing:.15em}@media(max-width:700px){.top{font-size:9px}.letter{padding:8px 12px}.copy{font-size:8px}.nav{font-size:10px}.main{padding-top:10px}.title-row{align-items:flex-start}.title-row h1{font-size:27px}.round-badge{font-size:10px;padding:7px 9px}.scoreboard{grid-template-columns:1fr 1fr;}.round-card{grid-column:1/-1;grid-row:1;min-height:45px}.score-card{grid-row:2}.arena{grid-template-columns:1fr;padding:10px}.camera-panel{min-height:0;max-height:330px}.camera-panel canvas{max-height:310px}.right-panel{gap:8px}.instructions{grid-template-columns:1fr 1fr 1fr;gap:5px}}@media(max-width:420px){.school-lockup .arabic{display:none}.score-card b{font-size:28px}.move-card b{font-size:18px}.result{font-size:15px}.instructions{font-size:9px}.tip b{font-size:10px}}
+</style>
 </head>
 <body>
-  <header class="school-header">
-    <div class="school-top">
-      <span>🇦🇪 Building Brave Tomorrow</span>
-      <span>AI Exhibition · Interactive Learning</span>
+<header class="school-header"><div class="top"><span>🇦🇪 Building Brave Tomorrow</span><span>AI Exhibition · Interactive Learning</span></div><div class="letter"><div class="school-side"><div class="flag"></div><div class="copy"><b>UNITED ARAB EMIRATES</b><span>MINISTRY OF EDUCATION</span><span>THE FIRST ACADEMY – PRIVATE, AJMAN</span></div></div><div class="school-side school-lockup"><div class="arabic"><b>مدرسة الأكاديمية الأولى</b><span>بوابة التعلم والابتكار</span></div><div class="logo">🎓</div></div></div><div class="nav">✨ AI Exhibition · Smart Games · Learning Through Technology</div></header>
+<main class="main">
+  <div class="title-row"><div><h1>AI Rock Paper Scissors</h1><p>Play with AI · Learn with technology · Have fun!</p></div><div class="round-badge">ROUND <span id="round-number">1</span></div></div>
+  <section class="scoreboard"><div class="score-card player"><div><small>TEAM 1 · PLAYER 1</small><b id="player-score">0</b></div><span class="avatar">🙋</span></div><div class="round-card"><small>BEST OF 5</small><b id="round-small">1</b><small>ROUND</small></div><div class="score-card ai"><div><small>TEAM 2 · AI PLAYER</small><b id="computer-score">0</b></div><span class="avatar">🤖</span></div></section>
+  <section class="arena">
+    <div class="camera-panel"><div class="camera-placeholder" id="placeholder"><strong>📷</strong>Press Start Game<br><small>Then allow camera access</small></div><div id="webcam-container"></div></div>
+    <div class="right-panel">
+      <div class="move-board"><div class="move-card"><small>PLAYER 1 MOVE</small><b id="detected">Waiting...</b></div><div class="move-card ai-move"><small>AI MOVE</small><b id="computer-move">Waiting...</b></div></div>
+      <div><div class="confidence-title"><span>AI CONFIDENCE</span><span id="confidence-number">0%</span></div><div class="confidence-bar"><div class="confidence-fill" id="confidence-fill"></div></div></div>
+      <div class="labels" id="label-container"><div class="label rock">✊ ROCK<span class="percent" id="rock-p">0%</span></div><div class="label paper">✋ PAPER<span class="percent" id="paper-p">0%</span></div><div class="label scissors">✌️ SCISSORS<span class="percent" id="scissors-p">0%</span></div></div>
+      <div class="result" id="result">Your first move is waiting!<br><small>Show Rock, Paper, or Scissors</small></div>
+      <div class="actions"><button class="primary" id="start-button" onclick="init()">▶ START GAME</button><button class="secondary" onclick="resetGame()">↻ NEW GAME</button></div>
     </div>
-    <div class="school-letter">
-      <div class="school-side">
-        <div class="uae-flag" aria-label="United Arab Emirates flag"></div>
-        <div class="school-copy">
-          <b>UNITED ARAB EMIRATES</b>
-          <span>MINISTRY OF EDUCATION</span>
-          <span>THE FIRST ACADEMY – PRIVATE, AJMAN</span>
-        </div>
-      </div>
-      <div class="school-side school-lockup">
-        <div class="school-arabic">
-          <b>مدرسة الأكاديمية الأولى</b>
-          <span>بوابة التعلم والابتكار</span>
-        </div>
-        <div class="school-logo" aria-label="The First Academy logo">🎓</div>
-      </div>
-    </div>
-    <div class="school-nav">✨ AI Exhibition · Smart Games · Learning Through Technology</div>
-  </header>
-  <main class="game-shell">
-    <h1 class="game-title">AI Rock Paper Scissors</h1>
-    <p class="game-subtitle">A fun machine-learning game presented by The First Academy, Ajman</p>
-  <div class="game">
-    <h1>AI Rock Paper Scissors</h1>
-    <p>Press Start, allow the camera, then show your hand.</p>
-
-    <div class="score">
-      <div>You: <strong id="player-score">0</strong></div>
-      <div>Computer: <strong id="computer-score">0</strong></div>
-    </div>
-
-    <button id="start-button" onclick="init()">Start Game</button>
-    <button onclick="resetGame()">Reset Score</button>
-
-    <div id="webcam-container"></div>
-    <p id="detected">Detected move: Waiting...</p>
-    <div id="label-container"></div>
-    <p id="result">Your first move will appear here.</p>
-    <p><small>One round is counted every two seconds.</small></p>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
-
-  <script>
-    // Your Teachable Machine model URL
-    const URL = "https://teachablemachine.withgoogle.com/models/ap3SgFs8l/";
-
-    let model, webcam, labelContainer, maxPredictions;
-    let playerScore = 0;
-    let computerScore = 0;
-    let canPlay = true;
-    let gameStarted = false;
-
-    async function init() {
-      if (gameStarted) return;
-      gameStarted = true;
-      document.getElementById("start-button").disabled = true;
-      document.getElementById("start-button").textContent = "Game Running";
-
-      const modelURL = URL + "model.json";
-      const metadataURL = URL + "metadata.json";
-
-      model = await tmImage.load(modelURL, metadataURL);
-      maxPredictions = model.getTotalClasses();
-
-      const flip = true;
-      webcam = new tmImage.Webcam(320, 320, flip);
-      await webcam.setup();
-      await webcam.play();
-      window.requestAnimationFrame(loop);
-
-      document.getElementById("webcam-container").appendChild(webcam.canvas);
-      labelContainer = document.getElementById("label-container");
-      for (let i = 0; i < maxPredictions; i++) {
-        labelContainer.appendChild(document.createElement("div"));
-      }
-    }
-
-    async function loop() {
-      webcam.update();
-      await predict();
-      window.requestAnimationFrame(loop);
-    }
-
-    async function predict() {
-      const prediction = await model.predict(webcam.canvas);
-
-      let best = prediction[0];
-      for (let i = 1; i < prediction.length; i++) {
-        if (prediction[i].probability > best.probability) {
-          best = prediction[i];
-        }
-      }
-
-      for (let i = 0; i < maxPredictions; i++) {
-        labelContainer.childNodes[i].innerHTML =
-          prediction[i].className + ": " + prediction[i].probability.toFixed(2);
-      }
-
-      const move = best.className.trim().toLowerCase();
-      const confidence = best.probability;
-      document.getElementById("detected").textContent =
-        "Detected: " + best.className + " (" + Math.round(confidence * 100) + "%)";
-
-      if (
-        canPlay && confidence >= 0.80 &&
-        (move === "rock" || move === "paper" || move === "scissors")
-      ) {
-        canPlay = false;
-        playRound(move);
-        setTimeout(function () {
-          canPlay = true;
-        }, 2000);
-      }
-    }
-
-    function playRound(playerMove) {
-      const moves = ["rock", "paper", "scissors"];
-      const computerMove = moves[Math.floor(Math.random() * moves.length)];
-      let result;
-
-      if (playerMove === computerMove) {
-        result = "Draw! Both chose " + titleCase(playerMove) + ".";
-      } else if (
-        (playerMove === "rock" && computerMove === "scissors") ||
-        (playerMove === "paper" && computerMove === "rock") ||
-        (playerMove === "scissors" && computerMove === "paper")
-      ) {
-        playerScore++;
-        result = "You win! You showed " + titleCase(playerMove) +
-          "; computer showed " + titleCase(computerMove) + ".";
-      } else {
-        computerScore++;
-        result = "Computer wins! You showed " + titleCase(playerMove) +
-          "; computer showed " + titleCase(computerMove) + ".";
-      }
-
-      document.getElementById("player-score").textContent = playerScore;
-      document.getElementById("computer-score").textContent = computerScore;
-      document.getElementById("result").textContent = result;
-    }
-
-    function titleCase(word) {
-      return word.charAt(0).toUpperCase() + word.slice(1);
-    }
-
-    function resetGame() {
-      playerScore = 0;
-      computerScore = 0;
-      document.getElementById("player-score").textContent = "0";
-      document.getElementById("computer-score").textContent = "0";
-      document.getElementById("result").textContent = "Score reset. Show your move.";
-    }
-  </script>
-  </main>
-  <footer class="school-footer">
-    <div class="school-footer-inner">
-      <div>
-        <h3>🎓 The First Academy</h3>
-        <p>Private School · Ajman, United Arab Emirates</p>
-        <p>AI Exhibition 2026 · Learning, creating, and innovating</p>
-      </div>
-      <div style="text-align:right">
-        <p>🇦🇪 United Arab Emirates</p>
-        <p>Ministry of Education</p>
-      </div>
-      <div class="school-motto">RESPECT · BELONG · ACHIEVE</div>
-    </div>
-  </footer>
+  </section>
+  <div class="instructions"><div class="tip"><b>1. START</b>Allow the camera</div><div class="tip"><b>2. SHOW</b>One hand sign</div><div class="tip"><b>3. WIN</b>Beat the AI!</div></div>
+</main>
+<footer class="footer"><div class="footer-inner"><span>🎓 The First Academy · Private School · Ajman, UAE</span><span class="motto">RESPECT · BELONG · ACHIEVE</span><span>AI Exhibition 2026</span></div></footer>
+<script>
+const URL="https://teachablemachine.withgoogle.com/models/ap3SgFs8l/";let model,webcam,maxPredictions,playerScore=0,computerScore=0,round=1,canPlay=true,gameStarted=false;
+const $=id=>document.getElementById(id);const moves=["rock","paper","scissors"];
+async function init(){if(gameStarted)return;gameStarted=true;$('start-button').disabled=true;$('start-button').textContent='● CAMERA READY';$('placeholder').style.display='none';try{model=await tmImage.load(URL+'model.json',URL+'metadata.json');maxPredictions=model.getTotalClasses();webcam=new tmImage.Webcam(390,390,true);await webcam.setup();await webcam.play();$('webcam-container').appendChild(webcam.canvas);requestAnimationFrame(loop)}catch(e){$('placeholder').style.display='block';$('placeholder').innerHTML='<strong>⚠️</strong>Camera could not start<br><small>Check permission and use HTTPS</small>';gameStarted=false;$('start-button').disabled=false;$('start-button').textContent='▶ START GAME'}}
+async function loop(){webcam.update();await predict();requestAnimationFrame(loop)}
+async function predict(){const prediction=await model.predict(webcam.canvas);let best=prediction[0];prediction.forEach(p=>{if(p.probability>best.probability)best=p});prediction.forEach(p=>{let id=p.className.trim().toLowerCase();let el=$(id+'-p');if(el)el.textContent=Math.round(p.probability*100)+'%'});let move=best.className.trim().toLowerCase(),confidence=best.probability;$('detected').textContent=best.className;$('confidence-number').textContent=Math.round(confidence*100)+'%';$('confidence-fill').style.width=Math.round(confidence*100)+'%';if(canPlay&&confidence>=.8&&moves.includes(move)){canPlay=false;playRound(move);setTimeout(()=>canPlay=true,2200)}}
+function playRound(player){let ai=moves[Math.floor(Math.random()*3)],result='';$('computer-move').textContent=title(ai);if(player===ai){result='🤝 DRAW! Great try!' ;setResult(result,'')}else if((player==='rock'&&ai==='scissors')||(player==='paper'&&ai==='rock')||(player==='scissors'&&ai==='paper')){playerScore++;result='🎉 TEAM 1 WINS!';setResult(result,'win')}else{computerScore++;result='🤖 AI WINS THIS ROUND!';setResult(result,'lose')}round++;$('player-score').textContent=playerScore;$('computer-score').textContent=computerScore;$('round-number').textContent=round;$('round-small').textContent=round}
+function setResult(text,kind){$('result').className='result '+kind;$('result').innerHTML=text+'<br><small>Show a new sign for the next round</small>'}
+function title(x){return x.charAt(0).toUpperCase()+x.slice(1)}
+function resetGame(){playerScore=0;computerScore=0;round=1;$('player-score').textContent=0;$('computer-score').textContent=0;$('round-number').textContent=1;$('round-small').textContent=1;$('computer-move').textContent='Waiting...';$('result').className='result';$('result').innerHTML='New game ready!<br><small>Show Rock, Paper, or Scissors</small>'}
+</script>
 </body>
 </html>
